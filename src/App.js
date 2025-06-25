@@ -654,7 +654,7 @@ const TihoTelegramBot = () => {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
-          📷 Instagram
+          📷 Instagram (запрещен в РФ)
         </a>
         <button 
           onClick={resetChat}
