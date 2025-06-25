@@ -35,7 +35,7 @@ const TihoTelegramBot = () => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
     script.onload = () => {
-      window.emailjs.init('YOUR_PUBLIC_KEY'); // Замените на ваш реальный ключ
+      window.emailjs.init('GHNs2GUiQLEW5zF9G'); // Замените на ваш реальный ключ
     };
     document.head.appendChild(script);
 
@@ -68,12 +68,12 @@ const TihoTelegramBot = () => {
         payment_method: data.paymentMethod || 'Не указано',
         delivery: data.delivery ? 'Да' : 'Нет',
         client_info: data.deliveryInfo || data.pickupInfo || 'Не указано',
-        to_email: 'rikatihonenko@gmail.com' // Email для получения заявок
+        to_email: 'info@tihogallery.ru' // Email для получения заявок
       };
 
       await window.emailjs.send(
-        'YOUR_SERVICE_ID', // Замените на реальный Service ID
-        'YOUR_TEMPLATE_ID', // Замените на реальный Template ID
+        'service_remrz6b', // Замените на реальный Service ID
+        'template_b8rcg0v', // Замените на реальный Template ID
         templateParams
       );
       
