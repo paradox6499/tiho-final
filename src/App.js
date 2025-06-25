@@ -6,7 +6,6 @@ const TihoTelegramBot = () => {
   const [userInput, setUserInput] = useState('');
   const [purchaseStep, setPurchaseStep] = useState(1);
   const [coopStep, setCoopStep] = useState(1);
-  const [eventsStep, setEventsStep] = useState(1);
   const [coopType, setCoopType] = useState('');
   const [purchaseData, setPurchaseData] = useState({});
 
@@ -32,6 +31,14 @@ const TihoTelegramBot = () => {
       }
     }
 
+    // Загрузка EmailJS
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+    script.onload = () => {
+      window.emailjs.init('YOUR_PUBLIC_KEY'); // Замените на ваш реальный ключ
+    };
+    document.head.appendChild(script);
+
     // Имитация загрузки приложения
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -44,7 +51,6 @@ const TihoTelegramBot = () => {
     setCurrentScreen('welcome');
     setPurchaseStep(1);
     setCoopStep(1);
-    setEventsStep(1);
     setCoopType('');
     setPurchaseData({});
     setUserInput('');
@@ -54,13 +60,36 @@ const TihoTelegramBot = () => {
     setCurrentScreen(action);
   };
 
+  // Функция отправки email через EmailJS
+  const sendEmailNotification = async (data) => {
+    try {
+      const templateParams = {
+        work_link: data.workLink || 'Не указано',
+        payment_method: data.paymentMethod || 'Не указано',
+        delivery: data.delivery ? 'Да' : 'Нет',
+        client_info: data.deliveryInfo || data.pickupInfo || 'Не указано',
+        to_email: 'rikatihonenko@gmail.com' // Email для получения заявок
+      };
+
+      await window.emailjs.send(
+        'YOUR_SERVICE_ID', // Замените на реальный Service ID
+        'YOUR_TEMPLATE_ID', // Замените на реальный Template ID
+        templateParams
+      );
+      
+      console.log('Email отправлен успешно');
+    } catch (error) {
+      console.error('Ошибка отправки email:', error);
+    }
+  };
+
   const renderWelcome = () => (
     <div className="space-y-4">
       <div className="bg-orange-600 text-white p-4 rounded-lg">
         <div className="flex items-start space-x-3">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
             <img 
-              src="https://i.imgur.com/tiho-logo.jpg" 
+              src="r8KKeM5ERkebe0KfNPS8-" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
             />
@@ -101,7 +130,7 @@ const TihoTelegramBot = () => {
           onClick={() => handleMainAction('events')}
           className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
         >
-          📅 Афиша мероприятий на месяц
+          📅 Афиша мероприятий
         </button>
       </div>
     </div>
@@ -113,13 +142,23 @@ const TihoTelegramBot = () => {
         <div className="space-y-4">
           <div className="bg-orange-600 text-white p-4 rounded-lg">
             <p>Отлично! Подскажите, какая работа вас интересует?</p>
-            <p className="text-sm mt-2">Пришлите, пожалуйста, ссылку на интересующую вас работу с нашего сайта</p>
-            <a href="https://tihogallery.ru/art" className="text-white underline">https://tihogallery.ru/art</a>
+            <p className="text-sm mt-2">Вы можете:</p>
+            <p className="text-xs mt-1">• Указать название работы или имя художника</p>
+            <p className="text-xs">• Описать интересующую вас работу</p>
+            <p className="text-xs">• Или вставить ссылку с нашего сайта</p>
+            <a 
+              href="https://tihogallery.ru/art" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline text-sm block mt-2"
+            >
+              📖 Открыть каталог работ
+            </a>
           </div>
           <div className="flex space-x-2">
             <input 
               type="text" 
-              placeholder="Введите ссылку на работу..."
+              placeholder="Название работы, художник или ссылка..."
               className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
@@ -212,7 +251,9 @@ const TihoTelegramBot = () => {
           <button 
             onClick={() => {
               if (userInput.trim()) {
-                setPurchaseData({...purchaseData, deliveryInfo: userInput});
+                const finalData = {...purchaseData, deliveryInfo: userInput};
+                setPurchaseData(finalData);
+                sendEmailNotification(finalData); // Отправка email
                 setUserInput('');
                 setPurchaseStep(6);
               }
@@ -243,7 +284,9 @@ const TihoTelegramBot = () => {
           <button 
             onClick={() => {
               if (userInput.trim()) {
-                setPurchaseData({...purchaseData, pickupInfo: userInput});
+                const finalData = {...purchaseData, pickupInfo: userInput};
+                setPurchaseData(finalData);
+                sendEmailNotification(finalData); // Отправка email
                 setUserInput('');
                 setPurchaseStep(6);
               }
@@ -261,8 +304,15 @@ const TihoTelegramBot = () => {
       return (
         <div className="space-y-4">
           <div className="bg-orange-600 text-white p-4 rounded-lg">
-            <p className="text-sm">Спасибо! Пока наши менеджеры обрабатывают запрос, вы можете ознакомиться с договором-офертой по данной ссылке:</p>
-            <a href="https://tihogallery.ru/faq#rec790264355" className="text-white underline text-sm">https://tihogallery.ru/faq#rec790264355</a>
+            <p className="text-sm">Спасибо! Ваша заявка отправлена менеджеру. Пока наши менеджеры обрабатывают запрос, вы можете ознакомиться с договором-офертой по данной ссылке:</p>
+            <a 
+              href="https://tihogallery.ru/faq#rec790264355" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline text-sm"
+            >
+              📄 Договор-оферта
+            </a>
             <p className="mt-2 text-sm">Мы вернемся с ответом в ближайшие пару часов!</p>
           </div>
           <button 
@@ -482,8 +532,17 @@ const TihoTelegramBot = () => {
   const renderReview = () => (
     <div className="space-y-4">
       <div className="bg-orange-600 text-white p-4 rounded-lg">
-        <p>Спасибо за интерес к отзывам! Функция уже работает, спасибо!</p>
+        <p>Будем рады вашему отзыву о галерее!</p>
+        <p className="text-sm mt-2">Оставьте отзыв на Яндекс Картах:</p>
       </div>
+      <a 
+        href="https://yandex.ru/maps/org/galereya_tikho/176880862431/reviews/?ll=37.643893%2C55.766800&tab=reviews&z=16.9"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full bg-yellow-500 text-white p-4 rounded-lg text-center font-semibold hover:bg-yellow-600 transition-colors block"
+      >
+        ⭐ Оставить отзыв на Яндекс Картах
+      </a>
       <button 
         onClick={resetChat}
         className="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
@@ -507,6 +566,14 @@ const TihoTelegramBot = () => {
         >
           📱 Telegram канал
         </a>
+        <a 
+          href="https://www.instagram.com/tihoartgallery?igsh=MWsyNnRqcjc2Z3RpZQ=="
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors block"
+        >
+          📷 Instagram
+        </a>
         <button 
           onClick={resetChat}
           className="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
@@ -517,66 +584,28 @@ const TihoTelegramBot = () => {
     </div>
   );
 
-  const renderEvents = () => {
-    if (eventsStep === 1) {
-      return (
-        <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
-            <p className="font-semibold">Афиша мероприятий на февраль:</p>
-          </div>
-          <button 
-            onClick={() => setEventsStep(2)}
-            className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
-          >
-            1) Групповая выставка «ПРОКРАСТИНАЦИЯ КАК ПРЕДЧУВСТВИЕ ГРАНДИОЗНОГО»
-          </button>
-          <button 
-            onClick={resetChat}
-            className="w-full px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-          >
-            Вернуться в главное меню
-          </button>
-        </div>
-      );
-    }
-
-    if (eventsStep === 2) {
-      return (
-        <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg text-sm">
-            <p className="font-semibold mb-2">Групповая выставка «Прокрастинация как предчувствие грандиозного»</p>
-            <p className="mb-2 text-xs opacity-90">14 февраля галерея ТИХО открыла групповую выставку «Прокрастинация как предчувствие грандиозного», которая предложит зрителям замедлить поток мыслей, посмотреть на себя и свою идею со стороны: полюбоваться ее неидельными формами, угловатостью, недосказанностью и странными переходами.</p>
-            <p className="mb-2 text-xs opacity-90">В выставке примут участие: Ян Тихоненко, Оксана Афанасьева, Марина Черкасова, Анастасия Успенская, Александр Волков, Радмила Мигулина, Вероника Кудашова, Аня Мохова, Мария Стадник, Аня Гросицкая, Юлия Живичина, Варвара Гранкова.</p>
-            <div className="bg-orange-700 p-2 rounded mt-3 text-xs">
-              <p><strong>Что:</strong> выставка «Прокрастинация как предчувствие грандиозного»</p>
-              <p><strong>Где:</strong> галерея ТИХО, Малый Харитоньевский пер., 6, стр. 2 (второй этаж)</p>
-              <p><strong>Когда:</strong> 14 февраля – 12 апреля</p>
-              <p><strong>Возрастная категория:</strong> +16</p>
-              <p><strong>Вход:</strong> 200 ₽</p>
-            </div>
-          </div>
-          <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
-            <p className="text-sm text-orange-800">📸 Фото выставки</p>
-            <a href="https://disk.yandex.ru/i/JfR9CK7MTj23jA" className="text-orange-600 underline text-sm hover:text-orange-700">Посмотреть</a>
-          </div>
-          <a 
-            href="https://tihogallery.ru/procrastination#popup:timepad"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-green-500 text-white p-4 rounded-lg text-center font-semibold hover:bg-green-600 transition-colors block"
-          >
-            🎫 Купить билет
-          </a>
-          <button 
-            onClick={resetChat}
-            className="w-full px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-          >
-            Вернуться в главное меню
-          </button>
-        </div>
-      );
-    }
-  };
+  const renderEvents = () => (
+    <div className="space-y-4">
+      <div className="bg-orange-600 text-white p-4 rounded-lg">
+        <p className="font-semibold">Афиша мероприятий:</p>
+        <p className="text-sm mt-2">Посмотрите актуальную афишу мероприятий на нашем сайте:</p>
+      </div>
+      <a 
+        href="https://tihogallery.ru/exhibitions"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full bg-blue-500 text-white p-4 rounded-lg text-center font-semibold hover:bg-blue-600 transition-colors block"
+      >
+        🎭 Полная афиша на сайте
+      </a>
+      <button 
+        onClick={resetChat}
+        className="w-full px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+      >
+        Вернуться в главное меню
+      </button>
+    </div>
+  );
 
   const renderCurrentScreen = () => {
     switch (currentScreen) {
@@ -603,7 +632,7 @@ const TihoTelegramBot = () => {
         <div className="text-center">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse overflow-hidden shadow-lg p-2">
             <img 
-              src="https://i.imgur.com/tiho-logo.jpg" 
+              src="r8KKeM5ERkebe0KfNPS8-" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
             />
@@ -620,7 +649,7 @@ const TihoTelegramBot = () => {
       <div className="bg-orange-600 text-white p-4 flex items-center space-x-3 sticky top-0 z-10 shadow-sm">
         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
           <img 
-            src="https://i.imgur.com/tiho-logo.jpg" 
+            src="r8KKeM5ERkebe0KfNPS8-" 
             alt="ТИХО Gallery" 
             className="w-full h-full object-contain"
           />
