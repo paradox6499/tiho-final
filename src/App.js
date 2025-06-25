@@ -17,8 +17,8 @@ const TihoTelegramBot = () => {
       tg.expand();
       
       // Настройка темы
-      tg.setHeaderColor('#cb5b40');
-      tg.setBackgroundColor('#cb5b40');
+      tg.setHeaderColor('#CB5B40');
+      tg.setBackgroundColor('#f3f4f6');
       
       // Показать кнопку "Назад" когда не на главном экране
       if (currentScreen !== 'welcome') {
@@ -35,7 +35,7 @@ const TihoTelegramBot = () => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
     script.onload = () => {
-      window.emailjs.init('GHNs2GUiQLEW5zF9G'); // Замените на ваш реальный ключ
+      window.emailjs.init('YOUR_PUBLIC_KEY'); // Замените на ваш реальный ключ
     };
     document.head.appendChild(script);
 
@@ -68,12 +68,12 @@ const TihoTelegramBot = () => {
         payment_method: data.paymentMethod || 'Не указано',
         delivery: data.delivery ? 'Да' : 'Нет',
         client_info: data.deliveryInfo || data.pickupInfo || 'Не указано',
-        to_email: 'info@tihogallery.ru' // Email для получения заявок
+        to_email: 'rikatihonenko@gmail.com' // Email для получения заявок
       };
 
       await window.emailjs.send(
-        'service_remrz6b', // Замените на реальный Service ID
-        'template_b8rcg0v', // Замените на реальный Template ID
+        'YOUR_SERVICE_ID', // Замените на реальный Service ID
+        'YOUR_TEMPLATE_ID', // Замените на реальный Template ID
         templateParams
       );
       
@@ -85,13 +85,17 @@ const TihoTelegramBot = () => {
 
   const renderWelcome = () => (
     <div className="space-y-4">
-      <div className="bg-orange-600 text-white p-4 rounded-lg">
+      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
         <div className="flex items-start space-x-3">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
             <img 
-              src="logo.jpg" 
+              src="/logo.png" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
+              onError={(e) => {
+                // Если логотип не найден, показываем fallback SVG
+                e.target.outerHTML = '<div className="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: #CB5B40;">Т</div>';
+              }}
             />
           </div>
           <div>
@@ -104,31 +108,46 @@ const TihoTelegramBot = () => {
       <div className="space-y-2">
         <button 
           onClick={() => handleMainAction('purchase')}
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           📖 Приобрести работу
         </button>
         <button 
           onClick={() => handleMainAction('cooperation')}
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           🤝 Уточнить условия сотрудничества
         </button>
         <button 
           onClick={() => handleMainAction('review')}
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           ⭐ Оставить отзыв
         </button>
         <button 
           onClick={() => handleMainAction('social')}
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           📱 Соцсети
         </button>
         <button 
           onClick={() => handleMainAction('events')}
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           📅 Афиша мероприятий
         </button>
@@ -140,7 +159,7 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 1) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Отлично! Подскажите, какая работа вас интересует?</p>
             <p className="text-sm mt-2">Вы можете:</p>
             <p className="text-xs mt-1">• Указать название работы или имя художника</p>
@@ -159,9 +178,12 @@ const TihoTelegramBot = () => {
             <input 
               type="text" 
               placeholder="Название работы, художник или ссылка..."
-              className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2"
+              style={{focusRingColor: '#CB5B40'}}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             />
             <button 
               onClick={() => {
@@ -171,7 +193,10 @@ const TihoTelegramBot = () => {
                   setPurchaseStep(2);
                 }
               }}
-              className="px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+              className="px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+              style={{backgroundColor: '#CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#A04932'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#CB5B40'}
               disabled={!userInput.trim()}
             >
               →
@@ -184,7 +209,7 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 2) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Подскажите, как вам было бы удобно оплатить покупку?</p>
           </div>
           <div className="space-y-2">
@@ -195,7 +220,10 @@ const TihoTelegramBot = () => {
                   setPurchaseData({...purchaseData, paymentMethod: option});
                   setPurchaseStep(3);
                 }}
-                className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+                className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+                style={{border: '1px solid #CB5B40'}}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
               >
                 {option}
               </button>
@@ -208,7 +236,7 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 3) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Спасибо! Подскажите, вам понадобится доставка?</p>
           </div>
           <div className="space-y-2">
@@ -217,7 +245,10 @@ const TihoTelegramBot = () => {
                 setPurchaseData({...purchaseData, delivery: true});
                 setPurchaseStep(4);
               }}
-              className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+              className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+              style={{border: '1px solid #CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
             >
               Да
             </button>
@@ -226,7 +257,10 @@ const TihoTelegramBot = () => {
                 setPurchaseData({...purchaseData, delivery: false});
                 setPurchaseStep(5);
               }}
-              className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+              className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+              style={{border: '1px solid #CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
             >
               Нет
             </button>
@@ -238,15 +272,17 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 4) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white text-sm p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white text-sm p-4 rounded-lg">
             <p>Отлично! Введите, пожалуйста, ваши ФИО и контактный номер телефона, реквизиты при оплате от юр.лиц, полный адрес доставки, а также контакты получателя. Все данные конфиденциальны и не подлежат передаче третьим лицам.</p>
             <p className="text-xs mt-2 opacity-90">Обращаем внимание, что доставка оплачивается отдельно. После расчета стоимости наш менеджер свяжется с вами для уточнения деталей.</p>
           </div>
           <textarea 
             placeholder="Введите все необходимые данные..."
-            className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
           />
           <button 
             onClick={() => {
@@ -258,7 +294,10 @@ const TihoTelegramBot = () => {
                 setPurchaseStep(6);
               }
             }}
-            className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+            className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+            style={{backgroundColor: '#CB5B40'}}
+            onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+            onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
             disabled={!userInput.trim()}
           >
             Отправить
@@ -270,16 +309,18 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 5) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white text-sm p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white text-sm p-4 rounded-lg">
             <p>Отлично! Забрать работу самостоятельно можно из пространства галереи по адресу г. Москва, Малый Харитоньевский переулок, д. 6с2 со вторника по субботу с 12:00 до 20:00.</p>
             <p className="text-xs mt-2 opacity-90">Просим заранее предупредить о своем визите как минимум за день, чтобы наша команда успела подготовить все документы и работу к выдаче. Заранее спасибо!</p>
             <p className="text-xs mt-2 opacity-90">Также укажите, пожалуйста, ваши ФИО и контактный номер телефона / реквизиты при оплате от юр.лиц. Все данные конфиденциальны и не подлежат передаче третьим лицам.</p>
           </div>
           <textarea 
             placeholder="Введите ваши данные..."
-            className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
           />
           <button 
             onClick={() => {
@@ -291,7 +332,10 @@ const TihoTelegramBot = () => {
                 setPurchaseStep(6);
               }
             }}
-            className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+            className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+            style={{backgroundColor: '#CB5B40'}}
+            onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+            onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
             disabled={!userInput.trim()}
           >
             Отправить
@@ -303,7 +347,7 @@ const TihoTelegramBot = () => {
     if (purchaseStep === 6) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p className="text-sm">Спасибо! Ваша заявка отправлена менеджеру. Пока наши менеджеры обрабатывают запрос, вы можете ознакомиться с договором-офертой по данной ссылке:</p>
             <a 
               href="https://tihogallery.ru/faq#rec790264355" 
@@ -330,7 +374,7 @@ const TihoTelegramBot = () => {
     if (coopStep === 1) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Подскажите, какое сотрудничество вас интересует?</p>
           </div>
           <div className="space-y-2">
@@ -341,7 +385,10 @@ const TihoTelegramBot = () => {
                   setCoopType(option);
                   setCoopStep(2);
                 }}
-                className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+                className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+                style={{border: '1px solid #CB5B40'}}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
               >
                 {option}
               </button>
@@ -355,13 +402,16 @@ const TihoTelegramBot = () => {
       if (coopType === 'я художник') {
         return (
           <div className="space-y-4">
-            <div className="bg-orange-600 text-white text-sm p-4 rounded-lg">
+            <div style={{backgroundColor: '#CB5B40'}} className="text-white text-sm p-4 rounded-lg">
               <p>Отлично! Если вы хотите стать художником нашей галереи, вам необходимо прислать ваше портфолио в формате PDF (не больше 25мб) с указанием названия и цены работ, а также полное актуальное CV в формате PDF на нашу почту info@tihogallery.ru.</p>
               <p className="text-xs mt-2 opacity-90">В теме письма необходимо указать «новый художник ТИХО». В противном случае ваше письмо просто потеряется.</p>
             </div>
             <button 
               onClick={() => setCoopStep(3)}
-              className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="w-full px-4 py-3 text-white rounded-lg transition-colors"
+              style={{backgroundColor: '#CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#A04932'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#CB5B40'}
             >
               Понятно, спасибо!
             </button>
@@ -372,15 +422,17 @@ const TihoTelegramBot = () => {
       if (coopType === 'я дизайнер') {
         return (
           <div className="space-y-4">
-            <div className="bg-orange-600 text-white text-sm p-4 rounded-lg">
+            <div style={{backgroundColor: '#CB5B40'}} className="text-white text-sm p-4 rounded-lg">
               <p>Отлично! Мы сотрудничаем с дизайнерами, декораторами и архитекторами. Вы можете взять наши работы на съёмку или примерку. Для аренды на съёмку вам необходимо будет оплатить транспортные расходы из галереи и обратно, а также указать галерею при публикации и любом использовании изображений произведений искусства.</p>
               <p className="text-xs mt-2 opacity-90">Опишите, пожалуйста, что вас интересует? Укажите желаемые даты и время съёмки/примерки, а также по возможности пришлите ссылки на интересующие вас работы с нашего сайта https://tihogallery.ru/art</p>
             </div>
             <textarea 
               placeholder="Опишите ваш запрос..."
-              className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             />
             <button 
               onClick={() => {
@@ -389,7 +441,10 @@ const TihoTelegramBot = () => {
                   setCoopStep(3);
                 }
               }}
-              className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+              className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+              style={{backgroundColor: '#CB5B40'}}
+              onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+              onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
               disabled={!userInput.trim()}
             >
               Отправить запрос
@@ -401,19 +456,21 @@ const TihoTelegramBot = () => {
       if (coopType === 'аренда помещения') {
         return (
           <div className="space-y-4">
-            <div className="bg-orange-600 text-white text-sm p-4 rounded-lg">
+            <div style={{backgroundColor: '#CB5B40'}} className="text-white text-sm p-4 rounded-lg">
               <p>Если вы ищете площадку под мероприятие, мы можем сдать помещение или его часть в ваше распоряжение.</p>
               <p className="text-xs mt-2 opacity-90">Подскажите, на какие даты и время вам необходима аренда галереи? Также просим вас указать, какую часть галереи вы рассматриваете под аренду: помещение полностью или маленький зал.</p>
             </div>
-            <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
-              <p className="text-sm text-orange-800">📄 Презентация с условиями аренды</p>
-              <a href="https://disk.yandex.ru/i/b64pBU6Ue9qn1Q" className="text-orange-600 underline text-sm hover:text-orange-700">Скачать PDF</a>
+            <div className="border p-3 rounded-lg" style={{backgroundColor: '#CB5B4010', borderColor: '#CB5B40'}}>
+              <p className="text-sm" style={{color: '#CB5B40'}}>📄 Презентация с условиями аренды</p>
+              <a href="https://disk.yandex.ru/i/b64pBU6Ue9qn1Q" className="underline text-sm" style={{color: '#CB5B40'}}>Скачать PDF</a>
             </div>
             <textarea 
               placeholder="Укажите даты, время и тип аренды..."
-              className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             />
             <button 
               onClick={() => {
@@ -422,7 +479,10 @@ const TihoTelegramBot = () => {
                   setCoopStep(3);
                 }
               }}
-              className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+              className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+              style={{backgroundColor: '#CB5B40'}}
+              onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+              onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
               disabled={!userInput.trim()}
             >
               Отправить запрос
@@ -434,14 +494,16 @@ const TihoTelegramBot = () => {
       if (coopType === 'другое') {
         return (
           <div className="space-y-4">
-            <div className="bg-orange-600 text-white p-4 rounded-lg">
+            <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
               <p className="text-sm">Опишите, пожалуйста, ваш запрос. Мы направим ваш запрос менеджеру и вернемся с ответом в ближайшее время.</p>
             </div>
             <textarea 
               placeholder="Опишите ваш запрос..."
-              className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 border rounded-lg h-32 focus:outline-none focus:ring-2"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             />
             <button 
               onClick={() => {
@@ -450,7 +512,10 @@ const TihoTelegramBot = () => {
                   setCoopStep(3);
                 }
               }}
-              className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+              className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+              style={{backgroundColor: '#CB5B40'}}
+              onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+              onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
               disabled={!userInput.trim()}
             >
               Отправить запрос
@@ -463,19 +528,25 @@ const TihoTelegramBot = () => {
     if (coopStep === 3) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Подскажите, у вас остались ещё вопросы?</p>
           </div>
           <div className="space-y-2">
             <button 
               onClick={() => setCoopStep(4)}
-              className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+              className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+              style={{border: '1px solid #CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
             >
               Да
             </button>
             <button 
               onClick={() => setCoopStep(5)}
-              className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors"
+              className="w-full bg-white p-3 rounded-lg text-left transition-colors"
+              style={{border: '1px solid #CB5B40'}}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
             >
               Нет
             </button>
@@ -487,14 +558,16 @@ const TihoTelegramBot = () => {
     if (coopStep === 4) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p className="text-sm">Опишите, пожалуйста, ваш вопрос. Мы направим его менеджеру и вернемся с ответом в ближайшее время.</p>
           </div>
           <textarea 
             placeholder="Введите ваш вопрос..."
-            className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-3 border rounded-lg h-24 focus:outline-none focus:ring-2"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
+            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
           />
           <button 
             onClick={() => {
@@ -503,7 +576,10 @@ const TihoTelegramBot = () => {
                 setCoopStep(5);
               }
             }}
-            className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg disabled:opacity-50 hover:bg-orange-700 transition-colors"
+            className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
+            style={{backgroundColor: '#CB5B40'}}
+            onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#A04932')}
+            onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#CB5B40')}
             disabled={!userInput.trim()}
           >
             Отправить
@@ -515,7 +591,7 @@ const TihoTelegramBot = () => {
     if (coopStep === 5) {
       return (
         <div className="space-y-4">
-          <div className="bg-orange-600 text-white p-4 rounded-lg">
+          <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Отлично! Будем ждать вас в гости. Хорошего дня!</p>
           </div>
           <button 
@@ -531,7 +607,7 @@ const TihoTelegramBot = () => {
 
   const renderReview = () => (
     <div className="space-y-4">
-      <div className="bg-orange-600 text-white p-4 rounded-lg">
+      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
         <p>Будем рады вашему отзыву о галерее!</p>
         <p className="text-sm mt-2">Оставьте отзыв на Яндекс Картах:</p>
       </div>
@@ -554,7 +630,7 @@ const TihoTelegramBot = () => {
 
   const renderSocial = () => (
     <div className="space-y-4">
-      <div className="bg-orange-600 text-white p-4 rounded-lg">
+      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
         <p>Подписывайтесь на наши соцсети:</p>
       </div>
       <div className="space-y-2">
@@ -562,7 +638,10 @@ const TihoTelegramBot = () => {
           href="https://t.me/tihoartgallery" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors block"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors block"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           📱 Telegram канал
         </a>
@@ -570,7 +649,10 @@ const TihoTelegramBot = () => {
           href="https://www.instagram.com/tihoartgallery?igsh=MWsyNnRqcjc2Z3RpZQ=="
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-full bg-white border border-orange-200 p-3 rounded-lg text-left hover:bg-orange-50 transition-colors block"
+          className="w-full bg-white p-3 rounded-lg text-left transition-colors block"
+          style={{border: '1px solid #CB5B40'}}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           📷 Instagram
         </a>
@@ -586,7 +668,7 @@ const TihoTelegramBot = () => {
 
   const renderEvents = () => (
     <div className="space-y-4">
-      <div className="bg-orange-600 text-white p-4 rounded-lg">
+      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
         <p className="font-semibold">Афиша мероприятий:</p>
         <p className="text-sm mt-2">Посмотрите актуальную афишу мероприятий на нашем сайте:</p>
       </div>
@@ -632,9 +714,13 @@ const TihoTelegramBot = () => {
         <div className="text-center">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse overflow-hidden shadow-lg p-2">
             <img 
-              src="r8KKeM5ERkebe0KfNPS8-" 
+              src="/logo.png" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<div className="w-full h-full rounded-full flex items-center justify-center text-white font-bold" style="background-color: #CB5B40;">Т</div>';
+              }}
             />
           </div>
           <p className="text-gray-600">Загрузка ТИХО Gallery...</p>
@@ -646,12 +732,16 @@ const TihoTelegramBot = () => {
   return (
     <div className="max-w-md mx-auto bg-gray-100 min-h-screen">
       {/* Header */}
-      <div className="bg-orange-600 text-white p-4 flex items-center space-x-3 sticky top-0 z-10 shadow-sm">
+      <div className="text-white p-4 flex items-center space-x-3 sticky top-0 z-10 shadow-sm" style={{backgroundColor: '#CB5B40'}}>
         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
           <img 
-            src="r8KKeM5ERkebe0KfNPS8-" 
+            src="/logo.png" 
             alt="ТИХО Gallery" 
             className="w-full h-full object-contain"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.innerHTML = '<div className="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-xs" style="background-color: #CB5B40;">Т</div>';
+            }}
           />
         </div>
         <div>
@@ -670,7 +760,10 @@ const TihoTelegramBot = () => {
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t p-3 shadow-lg">
           <button 
             onClick={resetChat}
-            className="w-full py-2 text-orange-600 text-sm font-medium hover:bg-orange-50 rounded transition-colors"
+            className="w-full py-2 text-sm font-medium rounded transition-colors"
+            style={{color: '#CB5B40'}}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
           >
             ← Главное меню
           </button>
