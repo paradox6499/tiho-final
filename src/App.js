@@ -17,8 +17,8 @@ const TihoTelegramBot = () => {
       tg.expand();
       
       // Настройка темы
-      tg.setHeaderColor('#ea580c');
-      tg.setBackgroundColor('#f3f4f6');
+      tg.setHeaderColor('#cb5b40');
+      tg.setBackgroundColor('#cb5b40');
       
       // Показать кнопку "Назад" когда не на главном экране
       if (currentScreen !== 'welcome') {
