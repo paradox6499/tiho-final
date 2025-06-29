@@ -8,6 +8,8 @@ const TihoTelegramBot = () => {
   const [coopStep, setCoopStep] = useState(1);
   const [coopType, setCoopType] = useState('');
   const [purchaseData, setPurchaseData] = useState({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [nextScreen, setNextScreen] = useState(null);
 
   useEffect(() => {
     // Telegram Web App инициализация
@@ -35,7 +37,7 @@ const TihoTelegramBot = () => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
     script.onload = () => {
-      window.emailjs.init('GHNs2GUiQLEW5zF9G'); // Замените на ваш реальный ключ
+      window.emailjs.init('YOUR_PUBLIC_KEY'); // Замените на ваш реальный ключ
     };
     document.head.appendChild(script);
 
@@ -48,16 +50,36 @@ const TihoTelegramBot = () => {
   }, [currentScreen]);
 
   const resetChat = () => {
-    setCurrentScreen('welcome');
-    setPurchaseStep(1);
-    setCoopStep(1);
-    setCoopType('');
-    setPurchaseData({});
-    setUserInput('');
+    setIsTransitioning(true);
+    setNextScreen('welcome');
+    setTimeout(() => {
+      setCurrentScreen('welcome');
+      setPurchaseStep(1);
+      setCoopStep(1);
+      setCoopType('');
+      setPurchaseData({});
+      setUserInput('');
+      setIsTransitioning(false);
+      setNextScreen(null);
+    }, 150);
   };
 
   const handleMainAction = (action) => {
-    setCurrentScreen(action);
+    setIsTransitioning(true);
+    setNextScreen(action);
+    setTimeout(() => {
+      setCurrentScreen(action);
+      setIsTransitioning(false);
+      setNextScreen(null);
+    }, 150);
+  };
+
+  const handleStepChange = (callback) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      callback();
+      setIsTransitioning(false);
+    }, 150);
   };
 
   // Функция отправки email через EmailJS
@@ -68,12 +90,12 @@ const TihoTelegramBot = () => {
         payment_method: data.paymentMethod || 'Не указано',
         delivery: data.delivery ? 'Да' : 'Нет',
         client_info: data.deliveryInfo || data.pickupInfo || 'Не указано',
-        to_email: 'info@tihogallery.ru' // Email для получения заявок
+        to_email: 'rikatihonenko@gmail.com' // Email для получения заявок
       };
 
       await window.emailjs.send(
-        'service_remrz6b', // Замените на реальный Service ID
-        'template_b8rcg0v', // Замените на реальный Template ID
+        'YOUR_SERVICE_ID', // Замените на реальный Service ID
+        'YOUR_TEMPLATE_ID', // Замените на реальный Template ID
         templateParams
       );
       
@@ -84,16 +106,15 @@ const TihoTelegramBot = () => {
   };
 
   const renderWelcome = () => (
-    <div className="space-y-4">
-      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
+    <div className="space-y-4 animate-fade-in">
+      <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg animate-bounce-in">
         <div className="flex items-start space-x-3">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
             <img 
-              src="/logo.jpg" 
+              src="/logo.png" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
               onError={(e) => {
-                // Если логотип не найден, показываем fallback SVG
                 e.target.outerHTML = '<div className="w-full h-full rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: #CB5B40;">Т</div>';
               }}
             />
@@ -108,8 +129,8 @@ const TihoTelegramBot = () => {
       <div className="space-y-2">
         <button 
           onClick={() => handleMainAction('purchase')}
-          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
-          style={{border: '1px solid #CB5B40'}}
+          className="w-full bg-white p-3 rounded-lg text-left transition-smooth hover-lift button-press animate-slide-in-right"
+          style={{border: '1px solid #CB5B40', animationDelay: '0.1s'}}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
@@ -117,8 +138,8 @@ const TihoTelegramBot = () => {
         </button>
         <button 
           onClick={() => handleMainAction('cooperation')}
-          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
-          style={{border: '1px solid #CB5B40'}}
+          className="w-full bg-white p-3 rounded-lg text-left transition-smooth hover-lift button-press animate-slide-in-right"
+          style={{border: '1px solid #CB5B40', animationDelay: '0.2s'}}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
@@ -126,8 +147,8 @@ const TihoTelegramBot = () => {
         </button>
         <button 
           onClick={() => handleMainAction('review')}
-          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
-          style={{border: '1px solid #CB5B40'}}
+          className="w-full bg-white p-3 rounded-lg text-left transition-smooth hover-lift button-press animate-slide-in-right"
+          style={{border: '1px solid #CB5B40', animationDelay: '0.3s'}}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
@@ -135,8 +156,8 @@ const TihoTelegramBot = () => {
         </button>
         <button 
           onClick={() => handleMainAction('social')}
-          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
-          style={{border: '1px solid #CB5B40'}}
+          className="w-full bg-white p-3 rounded-lg text-left transition-smooth hover-lift button-press animate-slide-in-right"
+          style={{border: '1px solid #CB5B40', animationDelay: '0.4s'}}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
@@ -144,8 +165,8 @@ const TihoTelegramBot = () => {
         </button>
         <button 
           onClick={() => handleMainAction('events')}
-          className="w-full bg-white p-3 rounded-lg text-left transition-colors hover:opacity-80"
-          style={{border: '1px solid #CB5B40'}}
+          className="w-full bg-white p-3 rounded-lg text-left transition-smooth hover-lift button-press animate-slide-in-right"
+          style={{border: '1px solid #CB5B40', animationDelay: '0.5s'}}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#CB5B4010'}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
@@ -158,7 +179,7 @@ const TihoTelegramBot = () => {
   const renderPurchase = () => {
     if (purchaseStep === 1) {
       return (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-in">
           <div style={{backgroundColor: '#CB5B40'}} className="text-white p-4 rounded-lg">
             <p>Отлично! Подскажите, какая работа вас интересует?</p>
             <p className="text-sm mt-2">Вы можете:</p>
@@ -179,7 +200,6 @@ const TihoTelegramBot = () => {
               type="text" 
               placeholder="Название работы, художник или ссылка..."
               className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2"
-              style={{focusRingColor: '#CB5B40'}}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onFocus={(e) => e.target.style.borderColor = '#CB5B40'}
@@ -188,9 +208,11 @@ const TihoTelegramBot = () => {
             <button 
               onClick={() => {
                 if (userInput.trim()) {
-                  setPurchaseData({...purchaseData, workLink: userInput});
-                  setUserInput('');
-                  setPurchaseStep(2);
+                  handleStepChange(() => {
+                    setPurchaseData({...purchaseData, workLink: userInput});
+                    setUserInput('');
+                    setPurchaseStep(2);
+                  });
                 }
               }}
               className="px-4 py-3 text-white rounded-lg disabled:opacity-50 transition-colors"
@@ -217,8 +239,10 @@ const TihoTelegramBot = () => {
               <button 
                 key={option}
                 onClick={() => {
-                  setPurchaseData({...purchaseData, paymentMethod: option});
-                  setPurchaseStep(3);
+                  handleStepChange(() => {
+                    setPurchaseData({...purchaseData, paymentMethod: option});
+                    setPurchaseStep(3);
+                  });
                 }}
                 className="w-full bg-white p-3 rounded-lg text-left transition-colors"
                 style={{border: '1px solid #CB5B40'}}
@@ -242,8 +266,10 @@ const TihoTelegramBot = () => {
           <div className="space-y-2">
             <button 
               onClick={() => {
-                setPurchaseData({...purchaseData, delivery: true});
-                setPurchaseStep(4);
+                handleStepChange(() => {
+                  setPurchaseData({...purchaseData, delivery: true});
+                  setPurchaseStep(4);
+                });
               }}
               className="w-full bg-white p-3 rounded-lg text-left transition-colors"
               style={{border: '1px solid #CB5B40'}}
@@ -254,8 +280,10 @@ const TihoTelegramBot = () => {
             </button>
             <button 
               onClick={() => {
-                setPurchaseData({...purchaseData, delivery: false});
-                setPurchaseStep(5);
+                handleStepChange(() => {
+                  setPurchaseData({...purchaseData, delivery: false});
+                  setPurchaseStep(5);
+                });
               }}
               className="w-full bg-white p-3 rounded-lg text-left transition-colors"
               style={{border: '1px solid #CB5B40'}}
@@ -289,7 +317,7 @@ const TihoTelegramBot = () => {
               if (userInput.trim()) {
                 const finalData = {...purchaseData, deliveryInfo: userInput};
                 setPurchaseData(finalData);
-                sendEmailNotification(finalData); // Отправка email
+                sendEmailNotification(finalData);
                 setUserInput('');
                 setPurchaseStep(6);
               }
@@ -327,7 +355,7 @@ const TihoTelegramBot = () => {
               if (userInput.trim()) {
                 const finalData = {...purchaseData, pickupInfo: userInput};
                 setPurchaseData(finalData);
-                sendEmailNotification(finalData); // Отправка email
+                sendEmailNotification(finalData);
                 setUserInput('');
                 setPurchaseStep(6);
               }
@@ -712,7 +740,7 @@ const TihoTelegramBot = () => {
     return (
       <div className="max-w-md mx-auto bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse overflow-hidden shadow-lg p-2">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-in overflow-hidden shadow-lg p-2">
             <img 
               src="/logo.png" 
               alt="ТИХО Gallery" 
@@ -731,6 +759,113 @@ const TihoTelegramBot = () => {
 
   return (
     <div className="max-w-md mx-auto bg-gray-100 min-h-screen">
+      <style jsx>{`
+        /* Все новые анимации из React компонента */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInFromRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes wiggle {
+          0%, 7% { transform: rotateZ(0); }
+          15% { transform: rotateZ(-15deg); }
+          20% { transform: rotateZ(10deg); }
+          25% { transform: rotateZ(-10deg); }
+          30% { transform: rotateZ(6deg); }
+          35% { transform: rotateZ(-4deg); }
+          40%, 100% { transform: rotateZ(0); }
+        }
+        @keyframes heartbeat {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 5px rgba(203, 91, 64, 0.5); }
+          50% { box-shadow: 0 0 20px rgba(203, 91, 64, 0.8); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        @keyframes neonPulse {
+          0%, 100% { box-shadow: 0 0 5px #CB5B40; }
+          50% { box-shadow: 0 0 20px #CB5B40; }
+        }
+        .animate-wiggle { animation: wiggle 1s ease-in-out; }
+        .animate-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-neon-pulse { animation: neonPulse 2s ease-in-out infinite; }
+        .ripple-effect { position: relative; overflow: hidden; }
+        .gradient-border {
+          background: linear-gradient(white, white) padding-box,
+                      linear-gradient(45deg, #CB5B40, #A04932) border-box;
+          border: 2px solid transparent;
+        }
+        .shadow-glow { box-shadow: 0 0 20px rgba(203, 91, 64, 0.3); }
+        .micro-bounce:hover { animation: elasticIn 0.3s ease-out; }
+      `}</style>
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInFromRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInFromLeft {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bounceIn {
+          0% { opacity: 0; transform: scale(0.3); }
+          50% { opacity: 1; transform: scale(1.05); }
+          70% { transform: scale(0.9); }
+          100% { transform: scale(1); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        .animate-slide-in-right {
+          animation: slideInFromRight 0.3s ease-out forwards;
+        }
+        .animate-slide-in-left {
+          animation: slideInFromLeft 0.3s ease-out forwards;
+        }
+        .animate-bounce-in {
+          animation: bounceIn 0.5s ease-out forwards;
+        }
+        .animate-pulse-hover:hover {
+          animation: pulse 0.3s ease-in-out;
+        }
+        .transition-smooth {
+          transition: all 0.2s ease-in-out;
+        }
+        .transition-transform {
+          transition: transform 0.15s ease-in-out;
+        }
+        .hover-lift:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(203, 91, 64, 0.15);
+        }
+        .button-press:active {
+          transform: scale(0.98);
+        }
+        .fade-transition {
+          transition: opacity 0.15s ease-in-out;
+        }
+        .fade-out {
+          opacity: 0.3;
+        }
+      `}</style>
       {/* Header */}
       <div className="text-white p-4 flex items-center space-x-3 sticky top-0 z-10 shadow-sm" style={{backgroundColor: '#CB5B40'}}>
         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
@@ -751,7 +886,7 @@ const TihoTelegramBot = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="p-4 pb-20">
+      <div className={`p-4 pb-20 fade-transition ${isTransitioning ? 'fade-out' : ''}`}>
         {renderCurrentScreen()}
       </div>
 
