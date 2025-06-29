@@ -111,7 +111,7 @@ const TihoTelegramBot = () => {
         <div className="flex items-start space-x-3">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden p-1">
             <img 
-              src="/logo.png" 
+              src="/logo.jpg" 
               alt="ТИХО Gallery" 
               className="w-full h-full object-contain"
               onError={(e) => {
